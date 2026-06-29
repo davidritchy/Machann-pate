@@ -15,7 +15,7 @@ import { FavoritesView } from "./components/FavoritesView";
 import { ChatRoom } from "./components/ChatRoom";
 import { SettingsModal } from "./components/SettingsModal";
 import { translations, Language } from "./translations";
-import logo_pate from "../img/logo_pate.webp";
+import logo_pate from "../img/logo_pate.webp"
 
 interface IceCreamShop {
   id: number;
@@ -28,9 +28,6 @@ interface IceCreamShop {
   phone: string;
   specialty: string;
   image: string;
-  latitude?: number;
-  longitude?: number;
-  display_name?: string;
 }
 
 interface Review {
@@ -194,9 +191,6 @@ export default function App() {
     phone: string;
     hours: string;
     specialty: string;
-    latitude?: number;
-    longitude?: number;
-    display_name?: string;
   }) => {
     const newShop: IceCreamShop = {
       id: shops.length + 1,
@@ -209,9 +203,6 @@ export default function App() {
       rating: 0,
       reviews: 0,
       image: "/api/placeholder/400/300",
-      latitude: shopData.latitude,
-      longitude: shopData.longitude,
-      display_name: shopData.display_name,
     };
 
     setShops([...shops, newShop]);
@@ -344,6 +335,9 @@ export default function App() {
     );
   }
 
+
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 relative">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -421,7 +415,6 @@ export default function App() {
                   : "Port-au-Prince, Haïti"}
               </span>
             </div>
-
             <div className="flex items-center gap-2">
               <SlidersHorizontal className="w-5 h-5 text-gray-600" />
               <select

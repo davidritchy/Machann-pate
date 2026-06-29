@@ -215,7 +215,8 @@ export default function App() {
       image: "/api/placeholder/400/300",
     };
 
- // Calculate distance using IP location if available
+
+   // Calculate distance using IP location if available
     if (ipLocation) {
       if (
         typeof newShop.latitude === "number" &&
@@ -233,7 +234,6 @@ export default function App() {
         newShop.distance = getDistanceFromIpLocation(newShop);
       }
     }
-    
 
    
 

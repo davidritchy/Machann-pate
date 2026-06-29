@@ -28,6 +28,9 @@ interface IceCreamShop {
   phone: string;
   specialty: string;
   image: string;
+  latitude?: number;// latitude optionnelle pour la boutique
+  longitude?: number;// longitude optionnelle pour la boutique
+  display_name?: string;// nom d'affichage optionnel pour la boutique
 }
 
 interface Review {

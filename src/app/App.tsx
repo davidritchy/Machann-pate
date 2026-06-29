@@ -196,9 +196,6 @@ export default function App() {
     phone: string;
     hours: string;
     specialty: string;
-    latitude?: number;
-    longitude?: number;
-    display_name?: string;
   }) => {
     const newShop: IceCreamShop = {
       id: shops.length + 1,
@@ -207,33 +204,22 @@ export default function App() {
       phone: shopData.phone,
       hours: shopData.hours,
       specialty: shopData.specialty,
-      latitude: shopData.latitude,
-      longitude: shopData.longitude,
-      display_name: shopData.display_name,
-      distance: "En attente de vérification",
+      distance: getDistanceFromIpLocation({
+        id: shops.length + 1,
+        name: shopData.name,
+        address: shopData.address,
+        phone: shopData.phone,
+        hours: shopData.hours,
+        specialty: shopData.specialty,
+        distance: "0 km", // Placeholder, will be updated
+        rating: 0,
+        reviews: 0,
+        image: "/api/placeholder/400/300",
+      }),//appel de la fonction getDistance
       rating: 0,
       reviews: 0,
       image: "/api/placeholder/400/300",
     };
-
-    // Calculate distance using IP location if available
-    if (ipLocation) {
-      if (
-        typeof newShop.latitude === "number" &&
-        typeof newShop.longitude === "number"
-      ) {
-        const d = calculerDistanceGPS(
-          ipLocation.latitude,
-          ipLocation.longitude,
-          newShop.latitude,
-          newShop.longitude,
-        );
-        newShop.distance = `${d.toFixed(2)} km`;
-      } else {
-        // Fallback: use getDistanceFromIpLocation which applies defaults
-        newShop.distance = getDistanceFromIpLocation(newShop);
-      }
-    }
 
    
 
@@ -385,32 +371,6 @@ const getDistanceFromIpLocation = (shop: IceCreamShop) => {
   useEffect(() => {
     getIpLocation();
   }, []);
-
-  // Recalculate shop distances when IP location becomes available
-  useEffect(() => {
-    if (!ipLocation) return;
-
-    setShops((prevShops) =>
-      prevShops.map((shop) => {
-        // If shop has real coords, compute precise distance
-        if (
-          typeof shop.latitude === "number" &&
-          typeof shop.longitude === "number"
-        ) {
-          const d = calculerDistanceGPS(
-            ipLocation.latitude,
-            ipLocation.longitude,
-            shop.latitude,
-            shop.longitude,
-          );
-          return { ...shop, distance: `${d.toFixed(2)} km` };
-        }
-
-        // Otherwise, use fallback function which applies defaults
-        return { ...shop, distance: getDistanceFromIpLocation(shop) };
-      }),
-    );
-  }, [ipLocation]);
 
   if (showFavorites) {
     return (

@@ -196,6 +196,9 @@ export default function App() {
     phone: string;
     hours: string;
     specialty: string;
+    latitude?: number;
+    longitude?: number;
+    display_name?: string;
   }) => {
     const newShop: IceCreamShop = {
       id: shops.length + 1,
@@ -204,22 +207,33 @@ export default function App() {
       phone: shopData.phone,
       hours: shopData.hours,
       specialty: shopData.specialty,
-      distance: getDistanceFromIpLocation({
-        id: shops.length + 1,
-        name: shopData.name,
-        address: shopData.address,
-        phone: shopData.phone,
-        hours: shopData.hours,
-        specialty: shopData.specialty,
-        distance: "0 km", // Placeholder, will be updated
-        rating: 0,
-        reviews: 0,
-        image: "/api/placeholder/400/300",
-      }),//appel de la fonction getDistance
+      latitude: shopData.latitude,
+      longitude: shopData.longitude,
+      display_name: shopData.display_name,
+      distance: "En attente de vérification",
       rating: 0,
       reviews: 0,
       image: "/api/placeholder/400/300",
     };
+
+    // Calculate distance using IP location if available
+    if (ipLocation) {
+      if (
+        typeof newShop.latitude === "number" &&
+        typeof newShop.longitude === "number"
+      ) {
+        const d = calculerDistanceGPS(
+          ipLocation.latitude,
+          ipLocation.longitude,
+          newShop.latitude,
+          newShop.longitude,
+        );
+        newShop.distance = `${d.toFixed(2)} km`;
+      } else {
+        // Fallback: use getDistanceFromIpLocation which applies defaults
+        newShop.distance = getDistanceFromIpLocation(newShop);
+      }
+    }
 
    
 

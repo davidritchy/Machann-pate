@@ -141,6 +141,8 @@ export default function App() {
   const [ipLocation, setIpLocation] = useState<{
     country: string;
     city: string;
+    latitude: number;
+    longitude: number;
   } | null>(null);
   const [shopReviews, setShopReviews] = useState<Review[]>([
     {
@@ -199,11 +201,24 @@ export default function App() {
       phone: shopData.phone,
       hours: shopData.hours,
       specialty: shopData.specialty,
-      distance: "En attente de vérification",
+      distance: getDistanceFromIpLocation({
+        id: shops.length + 1,
+        name: shopData.name,
+        address: shopData.address,
+        phone: shopData.phone,
+        hours: shopData.hours,
+        specialty: shopData.specialty,
+        distance: "0 km", // Placeholder, will be updated
+        rating: 0,
+        reviews: 0,
+        image: "/api/placeholder/400/300",
+      }),//appel de la fonction getDistance
       rating: 0,
       reviews: 0,
       image: "/api/placeholder/400/300",
     };
+
+   
 
     setShops([...shops, newShop]);
     setShowSuccessMessage(true);
@@ -298,6 +313,8 @@ export default function App() {
       setIpLocation({
         country: data.country_name,
         city: data.city,
+        latitude: data.latitude,
+        longitude: data.longitude,
       });
 
       console.log("Country:", data.country_name);
@@ -309,6 +326,44 @@ export default function App() {
       console.error("Could not get location:", error);
     }
   };
+
+
+  function calculerDistanceGPS(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Rayon de la Terre en kilomètres
+  
+  // Conversion des degrés en radians
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  
+  return R * c; // Distance en kilomètres
+}
+
+const getDistanceFromIpLocation = (shop: IceCreamShop) => {
+  if (!ipLocation) return "En attente de vérification";
+
+  // Exemple de coordonnées GPS pour Port-au-Prince, Haïti
+  const ipLat = ipLocation.latitude; // Latitude approximative de Port-au-Prince
+  const ipLon = ipLocation.longitude; // Longitude approximative de Port-au-Prince
+
+  // Pour l'exemple, nous allons supposer que chaque boutique a des coordonnées GPS fictives.
+  // Dans une application réelle, vous devriez stocker les coordonnées GPS réelles de chaque boutique.
+
+  
+  const shopLat = shop.latitude || 18.5944; // Latitude fictive
+  const shopLon = shop.longitude || -72.3074; // Longitude fictive
+  const distance = calculerDistanceGPS(ipLat, ipLon, shopLat, shopLon);
+
+  return `${distance.toFixed(2)} km`;
+};
+
+
+
 
   useEffect(() => {
     getIpLocation();

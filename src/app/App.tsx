@@ -28,6 +28,9 @@ interface IceCreamShop {
   phone: string;
   specialty: string;
   image: string;
+  latitude?: number;
+  longitude?: number;
+  display_name?: string;
 }
 
 interface Review {
@@ -191,6 +194,9 @@ export default function App() {
     phone: string;
     hours: string;
     specialty: string;
+    latitude?: number;
+    longitude?: number;
+    display_name?: string;
   }) => {
     const newShop: IceCreamShop = {
       id: shops.length + 1,
@@ -203,6 +209,9 @@ export default function App() {
       rating: 0,
       reviews: 0,
       image: "/api/placeholder/400/300",
+      latitude: shopData.latitude,
+      longitude: shopData.longitude,
+      display_name: shopData.display_name,
     };
 
     setShops([...shops, newShop]);

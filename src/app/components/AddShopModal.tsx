@@ -18,6 +18,9 @@ interface AddShopModalProps {
     phone: string;
     hours: string;
     specialty: string;
+    latitude?: number;
+    longitude?: number;
+    display_name?: string;
   }) => void;
 }
 
@@ -36,9 +39,25 @@ export function AddShopModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    // Try to resolve coordinates for the provided address
+    const coords = await getCoordsFromAddress(formData.address);
+
+    const payload = {
+      ...formData,
+      ...(coords
+        ? {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            display_name: coords.display_name,
+          }
+        : {}),
+    };
+
+    onSubmit(payload);
+
     setFormData({
       name: "",
       address: "",
@@ -59,6 +78,55 @@ export function AddShopModal({
       [e.target.name]: e.target.value,
     });
   };
+
+
+  // Remarque : les navigateurs n'autorisent pas la modification de l'en-tête `User-Agent`.
+  // Si vous devez définir un User-Agent, appelez Nominatim depuis un serveur.
+  const getCoordsFromAddress = async (
+    adressePostale: string,
+  ): Promise<
+    | { latitude: number; longitude: number; display_name: string }
+    | null
+  > => {
+    // Encodage de l'adresse pour qu'elle soit compatible avec une URL
+    const adresseEncodee = encodeURIComponent(adressePostale);
+
+    // Utiliser l'endpoint Nominatim correct
+    const url = `https://nominatim.openstreetmap.org/search?q=${adresseEncodee}&format=json&limit=1`;
+
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP : ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Vérification si un résultat a été trouvé
+      if (data && data.length > 0) {
+        const latitude = parseFloat(data[0].lat);
+        const longitude = parseFloat(data[0].lon);
+        const nomComplet = data[0].display_name;
+
+        console.log(`Adresse trouvée : ${nomComplet}`);
+        console.log(`Latitude : ${latitude}`);
+        console.log(`Longitude : ${longitude}`);
+
+        return { latitude, longitude, display_name: nomComplet };
+      } else {
+        console.warn("Aucune coordonnée trouvée pour cette adresse.");
+        return null;
+      }
+    } catch (err) {
+      console.error("Erreur lors de la requête :", err);
+      return null;
+    }
+  };
+
+  // Exemple d'utilisation (à appeler depuis un handler ou useEffect)
+  // getCoordsFromAddress("10 Rue de la Paix, Paris, France");
+
 
   return (
     <div

@@ -386,6 +386,32 @@ const getDistanceFromIpLocation = (shop: IceCreamShop) => {
     getIpLocation();
   }, []);
 
+  // Recalculate shop distances when IP location becomes available
+  useEffect(() => {
+    if (!ipLocation) return;
+
+    setShops((prevShops) =>
+      prevShops.map((shop) => {
+        // If shop has real coords, compute precise distance
+        if (
+          typeof shop.latitude === "number" &&
+          typeof shop.longitude === "number"
+        ) {
+          const d = calculerDistanceGPS(
+            ipLocation.latitude,
+            ipLocation.longitude,
+            shop.latitude,
+            shop.longitude,
+          );
+          return { ...shop, distance: `${d.toFixed(2)} km` };
+        }
+
+        // Otherwise, use fallback function which applies defaults
+        return { ...shop, distance: getDistanceFromIpLocation(shop) };
+      }),
+    );
+  }, [ipLocation]);
+
   if (showFavorites) {
     return (
       <>

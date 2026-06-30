@@ -56,7 +56,11 @@ export function AddShopModal({
         : {}),
     };
 
-    onSubmit(payload);
+   
+
+    if(coords !== null){
+
+       onSubmit(payload);
 
     setFormData({
       name: "",
@@ -66,6 +70,11 @@ export function AddShopModal({
       specialty: "",
     });
     onClose();
+    }
+    else{
+      alert("ERREUR AU NIVEAU DE L'ADRESSE!!! il se peut que l'adresse entrée ou trouvée soit inexacte...Verifiez tout le temps l'adresse et entrez l'addresse dans l'ordre indiquée!");
+      return;
+    }
   };
 
   const handleChange = (

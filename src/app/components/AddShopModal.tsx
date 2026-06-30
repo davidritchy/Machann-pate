@@ -72,7 +72,7 @@ export function AddShopModal({
     onClose();
     }
     else{
-      alert("ERREUR AU NIVEAU DE L'ADRESSE!!! il se peut que l'adresse entrée ou trouvée soit inexacte...Verifiez tout le temps l'adresse et entrez l'addresse dans l'ordre indiquée!");
+      alert("ERREUR AU NIVEAU DE L'ADRESSE!!! il se peut que l'adresse entrée ou trouvée soit inexacte...Verifiez tout le temps l'adresse et entrez l'adresse dans l'ordre indiquée!");
       return;
     }
   };
